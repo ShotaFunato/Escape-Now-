@@ -1,4 +1,4 @@
-Escape Now!_Data/* linguist-documentation
-Escape Now!_develop_Data/* linguist-documentation
-Library/* linguist-documentation
-ProjectSettings/* linguist-documentation
+Escape Now!_Data/* linguist-vendored
+Escape Now!_develop_Data/* linguist-vendored
+Library/* linguist-vendored
+ProjectSettings/* linguist-vendored
