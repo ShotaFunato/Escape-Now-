@@ -47,7 +47,7 @@ public class StageScene : Work
     /// <param name="h">縦軸座標添え字</param>
     /// <param name="maxW">横軸に並んでいるオブジェクト数</param>
     /// <param name="maxH">縦軸に並んでいるオブジェクト数</param>
-    private void setMapObj(GameObject obj, int w, int h, int maxW, int maxH)
+    private void SetMapObj(GameObject obj, int w, int h, int maxW, int maxH)
     {
         GameObject cameraObj = GameObject.Find("Main Camera");
         Camera camera = cameraObj.GetComponent<Camera>();
@@ -65,11 +65,13 @@ public class StageScene : Work
     /// </summary>
     private void MapCreate()
     {
+        DataBankController dataBankController = DataBankController.Instance;
         MapChipController mapController = MapChipController.Instance;
-        GameObject cameraObj = GameObject.Find("Main Camera");
-        Camera camera = cameraObj.GetComponent<Camera>();
 
-        mapController.MapCreate("stage1");
+        int num = 0;
+        dataBankController.GetNumber(ref num, (int)DataEntryDef.NumbersKind.SelectStageId);
+
+        mapController.MapCreate("stage" + num);
         int[] firstDatas = mapController.GetCsvFirstDatas();
         List<List<int>> mapLayerDatas = mapController.GetCsvDatas();
         int HNum = firstDatas[(int)MapChipController.CsvFirstLineData.HDataNum];
@@ -119,14 +121,14 @@ public class StageScene : Work
 
                     if (obj != null)
                     {
-                        this.setMapObj(obj, w, h, WNum, HNum);
+                        this.SetMapObj(obj, w, h, WNum, HNum);
                     }
 
                     if ((obj == null) || (value == MapChipDef.CsvCode.Start))
                     {
                         prefab = Resources.Load("Prefab/MapChipSprite") as GameObject;
                         obj = Instantiate(prefab) as GameObject;
-                        this.setMapObj(obj, w, h, WNum, HNum);
+                        this.SetMapObj(obj, w, h, WNum, HNum);
                         MapChipSprite mapChipSc = obj.GetComponent<MapChipSprite>();
                         mapChipSc.SetData(sprites,value,layer);
                     }

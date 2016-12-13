@@ -56,9 +56,9 @@ namespace FunatoLib
         /// </summary>
         protected void SetNum()
         {
-            NumbersController numController = NumbersController.Instance;
+            DataBankController dataBankController = DataBankController.Instance;
             int tmpInt = 0;
-            numController.GetNumbers(ref tmpInt, this.entrykind);
+            dataBankController.GetNumber(ref tmpInt, this.entrykind);
             string tmpStr = tmpInt.ToString();
             int i = 0;
 
@@ -115,11 +115,11 @@ namespace FunatoLib
         protected virtual void Start()
         {
             // 起動時に既に登録されているかチェック。されていないなら新規登録
-            NumbersController numController = NumbersController.Instance;
+            DataBankController dataBankController = DataBankController.Instance;
             int tmpInt = 0;
-            if (!numController.GetNumbers(ref tmpInt, this.entrykind))
+            if (!dataBankController.GetNumber(ref tmpInt, this.entrykind))
             {
-                numController.Entry(this.entrykind, this.defNumValue);
+                dataBankController.Entry(this.entrykind, this.defNumValue);
             }
 
             this.SetNum();
@@ -132,14 +132,14 @@ namespace FunatoLib
         /// </summary>
         protected virtual void Update()
         {
-            NumbersController numController = NumbersController.Instance;
+            DataBankController dataBankController = DataBankController.Instance;
             int tmpNum = this.prevNumValue;
 
-            if (numController.GetNumbers(ref tmpNum, this.entrykind))
+            if (dataBankController.GetNumber(ref tmpNum, this.entrykind))
             {
                 if (this.prevNumValue != tmpNum)
                 {
-                    numController.Entry(this.entrykind, tmpNum);
+                    dataBankController.Entry(this.entrykind, tmpNum);
                     this.SetNum();
                 }
             }

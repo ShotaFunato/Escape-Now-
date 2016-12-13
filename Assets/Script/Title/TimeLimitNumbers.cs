@@ -34,9 +34,9 @@ public class TimeLimitNumbers : Numbers
         this.timeLimit -= Time.deltaTime;
         this.timeLimit = ((this.timeLimit < 0) ? 0 : this.timeLimit);
 
-        NumbersController numController = NumbersController.Instance;
+        DataBankController dataBankController = DataBankController.Instance;
         int tmpNum = (int)Mathf.Ceil(this.timeLimit);
-        numController.Entry(this.entrykind, tmpNum);
+        dataBankController.Entry(this.entrykind, tmpNum);
 
         base.Update();
     }

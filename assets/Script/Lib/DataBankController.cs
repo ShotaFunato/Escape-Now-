@@ -1,5 +1,5 @@
 ﻿/**
-* 数値管理クラス
+* 数値保持管理クラス
 * @author Shota Funato
 */
 using UnityEngine;
@@ -7,19 +7,19 @@ using System.Collections.Generic;
 
 namespace FunatoLib
 {
-    public class NumbersController : SingletonMonoBehaviour<NumbersController>
+    public class DataBankController : SingletonMonoBehaviour<DataBankController>
     {
         /// <summary>
         /// 他のオブジェクトに数値を渡したり、シーンをまたいで引き継ぐための登録先
         /// </summary>
-        private Dictionary<int, int> numbersDictionary = new Dictionary<int, int>();
+        private Dictionary<int, int> numberDictionary = new Dictionary<int, int>();
 
         /// <summary>
         /// データ削除
         /// </summary>
         public void DataClear()
         {
-            this.numbersDictionary.Clear();
+            this.numberDictionary.Clear();
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace FunatoLib
         /// <param name="num">数値</param>
         public void Entry(int id, int num)
         {
-            this.numbersDictionary[id] = num;
+            this.numberDictionary[id] = num;
         }
 
         /// <summary>
@@ -38,11 +38,11 @@ namespace FunatoLib
         /// <param name="num">取得した数値をいれる</param>
         /// <param name="id">引き出したい数値に対応した文字</param>
         /// <returns>取得の成否</returns>
-        public bool GetNumbers(ref int num, int id)
+        public bool GetNumber(ref int num, int id)
         {
-            if (this.numbersDictionary.ContainsKey(id))
+            if (this.numberDictionary.ContainsKey(id))
             {
-                num = this.numbersDictionary[id];
+                num = this.numberDictionary[id];
                 return true;
             }
 

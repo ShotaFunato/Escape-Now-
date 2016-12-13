@@ -11,19 +11,10 @@ namespace FunatoLib
     public class Numbers : NumbersBase
     {
         /// <summary>
-        /// 登録種別列挙。他のワークから引き出せるように用途によって種別を変更する。
-        /// </summary>
-        public enum NumbersKind
-        {
-            TimeLimit,
-            ItemGet
-        };
-
-        /// <summary>
         /// 種別
         /// </summary>
         [SerializeField]
-        private Numbers.NumbersKind kind;
+        private DataEntryDef.NumbersKind kind;
 
         /// <summary>
         /// 初期化

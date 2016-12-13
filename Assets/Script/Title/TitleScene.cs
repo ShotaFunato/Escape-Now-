@@ -29,7 +29,7 @@ public class TitleScene : Work
 
         if (inputController.GetMouseLeftClick())
         {
-            SceneController.Instance.LoadScene(SceneController.SceneId.StageScene);
+            SceneController.Instance.LoadScene(SceneController.SceneId.StageSelectScene);
         }
     }
 }

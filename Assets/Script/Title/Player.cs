@@ -31,11 +31,11 @@ public class Player : Work
         else if (cheese)
         {
             // チーズ取得数を増やす
-            NumbersController numController = NumbersController.Instance;
+            DataBankController dataBankController = DataBankController.Instance;
             int nowItemGetNum = 0;
-            numController.GetNumbers(ref nowItemGetNum, (int)Numbers.NumbersKind.ItemGet);
+            dataBankController.GetNumber(ref nowItemGetNum, (int)DataEntryDef.NumbersKind.ItemGet);
             nowItemGetNum++;
-            numController.Entry((int)Numbers.NumbersKind.ItemGet, nowItemGetNum);
+            dataBankController.Entry((int)DataEntryDef.NumbersKind.ItemGet, nowItemGetNum);
         }
     }
 
