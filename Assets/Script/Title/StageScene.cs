@@ -53,9 +53,11 @@ public class StageScene : Work
         Camera camera = cameraObj.GetComponent<Camera>();
         float chipOfs = this.objOffset * this.MapChipScale;
 
-        float posX = camera.pixelWidth / 2 - chipOfs * (maxW + ((maxW % 2 == 0) ? -0.5f : 0)) / 2 + chipOfs * w;
-        float posY = camera.pixelHeight / 2 + chipOfs * maxH / 2 + this.mapOffsetY + chipOfs * -h;
-        Vector3 pos = new Vector3(posX, posY, 0);
+        Vector2 pos = new Vector2();
+        pos.x = camera.pixelWidth / 2 - chipOfs * (maxW - 1) / 2;
+        pos.y = camera.pixelHeight / 2 + chipOfs * (maxH - 1) / 2 + this.mapOffsetY;
+        pos.x += chipOfs * w;
+        pos.y -= chipOfs * h;
         obj.transform.localPosition = pos;
         obj.transform.localScale = new Vector3(this.MapChipScale, this.MapChipScale, 1);
     }
@@ -130,7 +132,7 @@ public class StageScene : Work
                         obj = Instantiate(prefab) as GameObject;
                         this.SetMapObj(obj, w, h, WNum, HNum);
                         MapChipSprite mapChipSc = obj.GetComponent<MapChipSprite>();
-                        mapChipSc.SetData(sprites,value,layer);
+                        mapChipSc.SetData(sprites, value, layer);
                     }
                 }
             }

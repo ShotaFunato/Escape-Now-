@@ -16,6 +16,15 @@ public class ResultScene : Work
     override protected void Start()
     {
         base.Start();
+
+        // リザルトに遷移した時に、セーブデータとして保存する
+        /*
+        // ゴールまで到達してクリアしたなら
+        if ()
+        {
+            PlayerPrefsでセーブデータに今回のスコア、ステージクリア済みを保存する
+        }        
+        */
     }
 
     /// <summary>
