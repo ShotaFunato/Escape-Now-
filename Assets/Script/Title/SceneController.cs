@@ -10,6 +10,9 @@ namespace FunatoLib
 {
     public class SceneController : SceneControllerBase<SceneController>
     {
+        /// <summary>
+        /// シーン識別番号列挙
+        /// </summary>
         public enum SceneId
         {
             TitleScene,
@@ -20,6 +23,9 @@ namespace FunatoLib
             SceneMax
         };
 
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
         private SceneController()
         {
             // 生成時にゲームに存在するシーン名前を登録しておく。順序はIDと合わせる

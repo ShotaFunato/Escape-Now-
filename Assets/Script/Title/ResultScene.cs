@@ -13,7 +13,7 @@ public class ResultScene : Work
     /// <summary>
     /// 初期化
     /// </summary>
-    override protected void Start()
+    protected override void Start()
     {
         base.Start();
 
@@ -25,20 +25,5 @@ public class ResultScene : Work
             PlayerPrefsでセーブデータに今回のスコア、ステージクリア済みを保存する
         }        
         */
-    }
-
-    /// <summary>
-    /// 更新
-    /// </summary>
-    override protected void Update()
-    {
-        base.Update();
-
-        InputController inputController = InputController.Instance;
-
-        if (inputController.GetMouseLeftClick())
-        {
-            SceneController.Instance.LoadScene(SceneController.SceneId.StageScene);
-        }
     }
 }

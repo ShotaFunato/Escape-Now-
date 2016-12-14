@@ -19,7 +19,7 @@ namespace FunatoLib
         /// <summary>
         /// 初期化
         /// </summary>
-        override protected void Start()
+        protected override void Start()
         {
             // 基底の方で処理する前に色々とゲームに合わせて設定しておく
 

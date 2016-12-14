@@ -33,11 +33,10 @@ public class StageSelectScene : Work
     /// <summary>
     /// 初期化
     /// </summary>
-    override protected void Start()
+    protected override void Start()
     {
         base.Start();
 
-        CanvasRenderer renderer = this.GetComponent<CanvasRenderer>();
         GameObject prefab = null;
         GameObject obj = null;
         StageButton button = null;
@@ -54,19 +53,12 @@ public class StageSelectScene : Work
             prefab = Resources.Load("Prefab/StageButton") as GameObject;
             obj = Instantiate(prefab) as GameObject;
             obj.transform.parent = this.transform;
-            button = obj.GetComponent<StageButton>();
             pos = startPos;
             pos.x += w * StageSelectScene.ButtonSize + w * StageSelectScene.ButtonSpace;
             pos.y -= h * StageSelectScene.ButtonSize + h * StageSelectScene.ButtonSpace;
-            button.SetButton(i, pos);
+            obj.transform.localPosition = pos;
+            button = obj.GetComponent<StageButton>();
+            button.SetButton(i);
         }
-    }
-
-    /// <summary>
-    /// 更新
-    /// </summary>
-    override protected void Update()
-    {
-        base.Update();
     }
 }

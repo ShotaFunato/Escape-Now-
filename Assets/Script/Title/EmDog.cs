@@ -29,7 +29,7 @@ public class EmDog : Work
     /// <summary>
     /// 初期化
     /// </summary>
-    override protected void Start()
+    protected override void Start()
     {
         base.Start();
 
@@ -40,7 +40,7 @@ public class EmDog : Work
     /// <summary>
     /// 更新
     /// </summary>
-    override protected void Update()
+    protected override void Update()
     {
         base.Update();
     }
