@@ -11,12 +11,12 @@ public class MapChipSprite : MonoBehaviour
     private static readonly string MapChipName = "mapchip_";
 
     // 指定のスプライト番号でスプライトを動的に変更する
-    public void SetData(Sprite[] sprites, MapChipDef.CsvCode code, int layer)
+    public void SetData(Sprite[] sprites, MapController.CsvCode code, int layer)
     {
         int spriteIdx = -1;
         for (int i = 0; i <= (int)code; i++)
         {
-            if (Enum.IsDefined(typeof(MapChipDef.CsvCode), (MapChipDef.CsvCode)i))
+            if (Enum.IsDefined(typeof(MapController.CsvCode), (MapController.CsvCode)i))
             {
                 spriteIdx++;
             }

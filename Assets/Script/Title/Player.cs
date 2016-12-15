@@ -17,12 +17,11 @@ public class Player : Work
     void OnTriggerEnter2D(Collider2D col)
     {
         // 当たっているものを探す
-        EmCat cat = col.gameObject.GetComponent<EmCat>();
-        EmDog dog = col.gameObject.GetComponent<EmDog>();
+        Enemy enemy = col.gameObject.GetComponent<Enemy>();
         ItmCheese cheese = col.gameObject.GetComponent<ItmCheese>();
 
-        // 敵の猫、犬に当たった
-        if ((cat) || (dog))
+        // 敵に当たった
+        if (enemy)
         {
             // 自分を削除する
             Destroy(this.gameObject);
@@ -54,14 +53,31 @@ public class Player : Work
     {
         base.Update();
 
+        MapController mapController = MapController.Instance;
         InputController inputController = InputController.Instance;
 
-        // 一時変数に格納
-        Vector3 pos = this.transform.position;
+        // 現在位置をマップチップの二次元配列上添え字に変換して、最初の地点として登録する
+        Vector2 nowWH = mapController.CalcMapChipHW(this.transform.localPosition);
+        // 現時点の通過可能情報を取得
+        MapController.PassageRoute passageRoute = mapController.GetPassageRoute(nowWH);
         // 値を変更
-        pos.x += inputController.GetAxisHorizontal();
-        pos.y += inputController.GetAxisVertical();
-        // 代入する
-        this.transform.position = pos;
+        Vector2 move = new Vector2(inputController.GetAxisHorizontal(), inputController.GetAxisVertical());
+        if (((move.x < 0) && (!passageRoute.dir[(int)MapController.Dir.Left])) ||
+            ((move.x > 0) && (!passageRoute.dir[(int)MapController.Dir.Right])))
+        {
+            move.x = 0;
+        }
+        if (((move.y > 0) && (!passageRoute.dir[(int)MapController.Dir.Up])) ||
+            ((move.y < 0) && (!passageRoute.dir[(int)MapController.Dir.Down])))
+        {
+            move.y = 0;
+        }
+        if ((move.x != 0) && (move.y != 0))
+        {
+            move.y = 0;
+        }
+        move.y = -move.y;
+        nowWH += move;
+        this.transform.position = mapController.CalcMapChipPos(nowWH);
     }
 }

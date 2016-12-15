@@ -11,55 +11,16 @@ using FunatoLib;
 public class StageScene : Work
 {
     /// <summary>
-    /// オブジェクト化するレイヤーデータテーブル
-    /// </summary>
-    static readonly bool[] MapLayerFlagTbl = new bool[(int)MapChipDef.MapLayerKind.LayerMax]
-    {
-        true,
-        true,
-        true,
-        false
-    };
-
-    /// <summary>
-    ///  マップチップのスケール
-    /// </summary>
-    [SerializeField]
-    private float MapChipScale = 1.5f;
-
-    /// <summary>
-    /// ステージ全体のY軸オフセット値
-    /// </summary>
-    [SerializeField]
-    private float mapOffsetY;
-
-    /// <summary>
-    /// 生成マップチップのオフセット値
-    /// </summary>
-    [SerializeField]
-    private float objOffset;
-
-    /// <summary>
     /// マップオブジェクトを設定する
     /// </summary>
     /// <param name="obj">マップオブジェクト</param>
     /// <param name="w">横軸座標添え字</param>
     /// <param name="h">縦軸座標添え字</param>
-    /// <param name="maxW">横軸に並んでいるオブジェクト数</param>
-    /// <param name="maxH">縦軸に並んでいるオブジェクト数</param>
-    private void SetMapObj(GameObject obj, int w, int h, int maxW, int maxH)
+    private void SetMapObj(GameObject obj, int w, int h)
     {
-        GameObject cameraObj = GameObject.Find("Main Camera");
-        Camera camera = cameraObj.GetComponent<Camera>();
-        float chipOfs = this.objOffset * this.MapChipScale;
-
-        Vector2 pos = new Vector2();
-        pos.x = camera.pixelWidth / 2 - chipOfs * (maxW - 1) / 2;
-        pos.y = camera.pixelHeight / 2 + chipOfs * (maxH - 1) / 2 + this.mapOffsetY;
-        pos.x += chipOfs * w;
-        pos.y -= chipOfs * h;
-        obj.transform.localPosition = pos;
-        obj.transform.localScale = new Vector3(this.MapChipScale, this.MapChipScale, 1);
+        MapController mapController = MapController.Instance;
+        obj.transform.localPosition = mapController.CalcMapChipPos( w, h );
+        obj.transform.localScale = new Vector3(MapController.MapChipScale, MapController.MapChipScale, 1);
     }
 
     /// <summary>
@@ -68,29 +29,27 @@ public class StageScene : Work
     private void MapCreate()
     {
         DataBankController dataBankController = DataBankController.Instance;
-        MapChipController mapController = MapChipController.Instance;
+        MapController mapController = MapController.Instance;
 
         int num = 0;
         dataBankController.GetNumber(ref num, (int)DataEntryDef.NumbersKind.SelectStageId);
-
         mapController.MapCreate("stage" + num);
-        int[] firstDatas = mapController.GetCsvFirstDatas();
-        List<List<int>> mapLayerDatas = mapController.GetCsvDatas();
-        int HNum = firstDatas[(int)MapChipController.CsvFirstLineData.HDataNum];
-        int WNum = firstDatas[(int)MapChipController.CsvFirstLineData.WDataNum];
-        float chipOfs = this.objOffset * this.MapChipScale;
+
+        List<List<int>> mapLayerDatas = mapController.GetMapDatas();
+        int HNum = mapController.GetMapHNum();
+        int WNum = mapController.GetMapWNum();
         Sprite[] sprites = Resources.LoadAll<Sprite>("Sprite/mapchip");
 
         for (int layer = 0; layer < mapLayerDatas.Count; layer++)
         {
-            if (!StageScene.MapLayerFlagTbl[layer]) continue;
+            if (!MapController.MapLayerFlagTbl[layer]) continue;
 
             for (int h = 0; h < HNum; h++)
             {
                 for (int w = 0; w < WNum; w++)
                 {
-                    MapChipDef.CsvCode value = (MapChipDef.CsvCode)mapLayerDatas[layer][h * WNum + w];
-                    if ((value == MapChipDef.CsvCode.None) || (value == MapChipDef.CsvCode.AllWall))
+                    MapController.CsvCode value = (MapController.CsvCode)mapLayerDatas[layer][h * WNum + w];
+                    if ((value == MapController.CsvCode.None) || (value == MapController.CsvCode.AllWall))
                     {
                         continue;
                     }
@@ -99,23 +58,23 @@ public class StageScene : Work
                     GameObject obj = null;
                     switch (value)
                     {
-                        case MapChipDef.CsvCode.Start:
+                        case MapController.CsvCode.Start:
                             prefab = Resources.Load("Prefab/Player") as GameObject;
                             obj = Instantiate(prefab) as GameObject;
                             break;
-                        case MapChipDef.CsvCode.EmCat:
+                        case MapController.CsvCode.EmCat:
                             prefab = Resources.Load("Prefab/EmCat") as GameObject;
                             obj = Instantiate(prefab) as GameObject;
                             break;
-                        case MapChipDef.CsvCode.EmDog:
+                        case MapController.CsvCode.EmDog:
                             prefab = Resources.Load("Prefab/EmDog") as GameObject;
                             obj = Instantiate(prefab) as GameObject;
                             break;
-                        case MapChipDef.CsvCode.ItmCheese:
+                        case MapController.CsvCode.ItmCheese:
                             prefab = Resources.Load("Prefab/ItmCheese") as GameObject;
                             obj = Instantiate(prefab) as GameObject;
                             break;
-                        case MapChipDef.CsvCode.GimickWeb:
+                        case MapController.CsvCode.GimickWeb:
                             break;
                         default:
                             break;
@@ -123,14 +82,14 @@ public class StageScene : Work
 
                     if (obj != null)
                     {
-                        this.SetMapObj(obj, w, h, WNum, HNum);
+                        this.SetMapObj(obj, w, h);
                     }
 
-                    if ((obj == null) || (value == MapChipDef.CsvCode.Start))
+                    if ((obj == null) || (value == MapController.CsvCode.Start))
                     {
                         prefab = Resources.Load("Prefab/MapChipSprite") as GameObject;
                         obj = Instantiate(prefab) as GameObject;
-                        this.SetMapObj(obj, w, h, WNum, HNum);
+                        this.SetMapObj(obj, w, h);
                         MapChipSprite mapChipSc = obj.GetComponent<MapChipSprite>();
                         mapChipSc.SetData(sprites, value, layer);
                     }

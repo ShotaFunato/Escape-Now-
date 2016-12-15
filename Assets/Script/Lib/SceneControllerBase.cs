@@ -32,7 +32,7 @@ namespace FunatoLib
         {
             if (id >= this.sceneNameList.Count)
             {
-                Debug.Log("GameController LoadScene EntryOverId : " + id);
+                Debug.Log(this.GetType().FullName + "   LoadScene EntryOverId : " + id);
                 return;
             }
             SceneManager.LoadScene(this.sceneNameList[id]);
