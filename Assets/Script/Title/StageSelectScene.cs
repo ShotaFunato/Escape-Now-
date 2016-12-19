@@ -48,6 +48,7 @@ public class StageSelectScene : Work
         Vector2 pos = new Vector2();
         for (int i = 0; i < StageSelectScene.StageMaxNum; i++)
         {
+            int stageId = i + 1;
             int w = i % wNum;
             int h = Mathf.FloorToInt(i / wNum);
             prefab = Resources.Load("Prefab/StageButton") as GameObject;
@@ -58,7 +59,11 @@ public class StageSelectScene : Work
             pos.y -= h * StageSelectScene.ButtonSize + h * StageSelectScene.ButtonSpace;
             obj.transform.localPosition = pos;
             button = obj.GetComponent<StageButton>();
-            button.SetButton(i);
+            button.SetButton(stageId);
+
+            string key = DataEntryDef.SaveKind.Stage.ToString() + stageId;
+            Save.GetData(key + DataEntryDef.SaveKind.ClearTime.ToString(), TimeLimitNumbers.DefaultTime);
+            Save.GetData(key + DataEntryDef.SaveKind.ItemGet.ToString(), ItemGetNumbers.DefaultNum);
         }
     }
 }

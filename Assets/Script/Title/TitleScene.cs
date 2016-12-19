@@ -27,7 +27,7 @@ public class TitleScene : Work
 
         InputController inputController = InputController.Instance;
 
-        if (inputController.GetMouseLeftClick())
+        if (inputController.GetTouchInfo() != InputController.TouchInfo.None)
         {
             SceneController.Instance.LoadScene(SceneController.SceneId.StageSelectScene);
         }

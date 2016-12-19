@@ -1,5 +1,5 @@
 ﻿/**
-* 数値保持管理クラス
+* シーンやオブジェクトをまたいで利用するデータ管理クラス
 * @author Shota Funato
 */
 using UnityEngine;

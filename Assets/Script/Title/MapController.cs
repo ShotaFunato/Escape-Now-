@@ -157,11 +157,6 @@ public class MapController : SingletonMonoBehaviour<MapController>
     };
 
     /// <summary>
-    /// マップ全体のY軸オフセット値
-    /// </summary>
-    public static readonly float MapOffsetY = 0;
-
-    /// <summary>
     /// マップチップの絵素材のサイズ
     /// </summary>
     public static readonly float MapChipPictSize = 64;
@@ -170,6 +165,11 @@ public class MapController : SingletonMonoBehaviour<MapController>
     ///  マップチップのスケール
     /// </summary>
     public static readonly float MapChipScale = 1.5f;
+
+    /// <summary>
+    /// マップチップの中心点割合
+    /// </summary>
+    public static readonly float MapChipPivot = 0.5f;
 
     /// <summary>
     /// マップチップのオブジェクトサイズ
@@ -185,6 +185,11 @@ public class MapController : SingletonMonoBehaviour<MapController>
     /// CSVでレイヤー構造になっているステージ構成データをいれる
     /// </summary>
     private List<List<int>> mapDatas = new List<List<int>>();
+
+    /// <summary>
+    /// マップの左上座標と縦横の幅
+    /// </summary>
+    private Vector4 mapRange = new Vector4();
 
     /// <summary>
     /// ステージ構成データ取得
@@ -287,18 +292,13 @@ public class MapController : SingletonMonoBehaviour<MapController>
     /// <returns>開始左上座標</returns>
     public Vector2 GetMapChipStartPos()
     {
-        Vector2 pos = new Vector2();
-        GameObject cameraObj = GameObject.Find("Main Camera");
-        Camera camera = cameraObj.GetComponent<Camera>();
-        float chipOfs = MapController.MapChipSize;
-        int maxH = this.GetMapHNum();
-        int maxW = this.GetMapWNum();
-        pos.x = camera.pixelWidth / 2 - chipOfs * (maxW - 1) / 2;
-        pos.y = camera.pixelHeight / 2 + chipOfs * (maxH - 1) / 2 + MapController.MapOffsetY;
-
+        Vector2 pos = new Vector2(this.mapRange.x, this.mapRange.y);
+        float chipPivotOfs = MapController.MapChipSize * MapController.MapChipPivot;
+        pos.x += chipPivotOfs;
+        pos.y -= chipPivotOfs;
         return pos;
     }
-
+    
     /// <summary>
     /// 指定位置のマップチップ座標を算出して取得
     /// </summary>
@@ -331,7 +331,7 @@ public class MapController : SingletonMonoBehaviour<MapController>
     }
 
     /// <summary>
-    /// 座標からマップチップ縦横軸番号算出して取得
+    /// マップチップ座標からマップチップ縦横軸番号算出して取得
     /// </summary>
     /// <returns>マップチップの縦横軸番号</returns>
     public Vector2 CalcMapChipHW(Vector2 pos)
@@ -347,6 +347,35 @@ public class MapController : SingletonMonoBehaviour<MapController>
     }
 
     /// <summary>
+    /// 指定レイヤーに対して、指定した座標で選択したマップデータ取得
+    /// </summary>
+    /// <param name="wh">選択したマップチップ番号</param>
+    /// <param name="chkPos">指定座標</param>
+    /// <returns>指定座標でマップデータを選択できたらデータを返し、選択できなかった場合はNoneを返す</returns>
+    public MapController.CsvCode ChangePosToChipWH(ref Vector2 wh, MapController.MapLayerKind layer, Vector2 chkPos)
+    {
+        int px = (int)chkPos.x;
+        int py = (int)chkPos.y;
+        int ax = (int)this.mapRange.x;
+        int ay = (int)this.mapRange.y;
+        int bx = ax + (int)this.mapRange.w;
+        int by = ay + (int)this.mapRange.z;
+        if ((px >= ax) && (px <= bx) && (py <= ay) && (py >= by))
+        {
+            wh.x = Mathf.FloorToInt(Math.Abs(px - ax) / MapController.MapChipSize );
+            wh.y = Mathf.FloorToInt(Math.Abs(py - ay) / MapController.MapChipSize );
+            int num = this.CalcListWHConvNum(wh);
+            if (num >= this.mapDatas[(int)layer].Count)
+            {
+                return MapController.CsvCode.None;
+            }
+            return (MapController.CsvCode)this.mapDatas[(int)layer][num];
+        }
+
+        return MapController.CsvCode.None;
+    }
+
+    /// <summary>
     /// マップ生成
     /// </summary>
     /// <param name="fileName">読み込むcsvファイル名</param>
@@ -355,6 +384,9 @@ public class MapController : SingletonMonoBehaviour<MapController>
         // csvデータを変換したものをいれるもの
         TextAsset csvFile;
         string[] dataList;
+
+        // データ削除
+        this.mapDatas.Clear();
 
         // リソース内のCsvフォルダにある指定ファイルを読み込む
         csvFile = Resources.Load("Csv/" + fileName) as TextAsset;
@@ -406,5 +438,16 @@ public class MapController : SingletonMonoBehaviour<MapController>
                 lineNum = 0;
             }
         }
+
+        GameObject cameraObj = GameObject.Find("Main Camera");
+        Camera camera = cameraObj.GetComponent<Camera>();
+        int maxH = this.GetMapHNum();
+        int maxW = this.GetMapWNum();
+        float chipSize = MapController.MapChipSize;
+        float chipPivotOfs = chipSize * MapController.MapChipPivot;
+        this.mapRange.x = camera.pixelWidth / 2 - chipSize * (maxW - 1) / 2 - chipPivotOfs;
+        this.mapRange.y = camera.pixelHeight / 2 + chipSize * (maxH - 1) / 2 + chipPivotOfs;
+        this.mapRange.w = MapController.MapChipSize * maxW;
+        this.mapRange.z = MapController.MapChipSize * -maxH;
     }
 }

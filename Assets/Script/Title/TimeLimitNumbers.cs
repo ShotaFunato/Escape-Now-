@@ -2,11 +2,17 @@
 * 制限時間クラス
 * @author Shota Funato
 */
+
 using UnityEngine;
 using FunatoLib;
 
 public class TimeLimitNumbers : Numbers
 {
+    /// <summary>
+    /// 初期値
+    /// </summary>
+    public static readonly int DefaultTime = 60;
+
     /// <summary>
     /// 制限時間
     /// </summary>
@@ -18,7 +24,8 @@ public class TimeLimitNumbers : Numbers
     protected override void Start()
     {
         // 基底の方で処理する前に色々とゲームに合わせて設定しておく
-
+        this.kind = DataEntryDef.DataBankKind.TimeLimit;
+        this.defNumValue = TimeLimitNumbers.DefaultTime;
         this.timeLimit = this.defNumValue;
 
         base.Start();

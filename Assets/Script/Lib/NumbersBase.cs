@@ -36,9 +36,8 @@ namespace FunatoLib
         public float fontSize = 0.1f;
 
         /// <summary>
-        /// 外部設定用
+        /// 初期登録用
         /// </summary>
-        [SerializeField]
         protected int defNumValue = 0;
 
         /// <summary>
@@ -114,16 +113,13 @@ namespace FunatoLib
         /// </summary>
         protected virtual void Start()
         {
-            // 起動時に既に登録されているかチェック。されていないなら新規登録
-            DataBankController dataBankController = DataBankController.Instance;
-            int tmpInt = 0;
-            if (!dataBankController.GetNumber(ref tmpInt, this.entrykind))
-            {
-                dataBankController.Entry(this.entrykind, this.defNumValue);
-            }
+            // 標準値で登録
+            DataBankController.Instance.Entry(this.entrykind, this.defNumValue);
 
+            // 数値スプライト設定
             this.SetNum();
 
+            // 更新されたかを確認するため、値保持
             this.prevNumValue = this.defNumValue;
         }
 

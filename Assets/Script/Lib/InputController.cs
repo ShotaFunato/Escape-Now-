@@ -9,6 +9,14 @@ namespace FunatoLib
 {
     public class InputController : SingletonMonoBehaviour<InputController>
     {
+        public enum TouchInfo
+        {
+            None,
+            Began,
+            Now,
+            End,
+        };
+
         /// <summary>
         /// 左右入力取得
         /// </summary>
@@ -28,39 +36,65 @@ namespace FunatoLib
         }
 
         /// <summary>
-        /// 
+        /// タッチ入力プラットフォームかチェック
         /// </summary>
-        /// <returns></returns>
-        public bool GetMouseLeftClick()
+        /// <returns>タッチ入力プラットフォームならtrue</returns>
+        public bool CheckTouchPlatform()
         {
-            return Input.GetMouseButton(0);
+            return ((Application.platform == RuntimePlatform.Android) || (Application.platform == RuntimePlatform.IPhonePlayer));
         }
 
-        public bool GetMouseRightClick()
+        /// <summary>
+        /// タッチ情報を取得(エディタと実機を考慮)
+        /// </summary>
+        /// <returns>タッチ情報。タッチされていない場合は TouchInfo.None</returns>
+        public InputController.TouchInfo GetTouchInfo()
         {
-            return Input.GetMouseButton(1);
-        }
-
-        public bool GetMouseWheelClick()
-        {
-            return Input.GetMouseButton(1);
-        }
-
-        public void GetMousePos(ref Vector3 screenPos)
-        {
-            screenPos = Input.mousePosition;
-            screenPos = Camera.main.ScreenToWorldPoint(screenPos);
-        }
-
-        public bool GetMouseClickPos(ref Vector3 screenPos)
-        {
-            if (this.GetMouseLeftClick())
+            if (this.CheckTouchPlatform())
             {
-                this.GetMousePos(ref screenPos);
-                return true;
+                if (Input.touchCount > 0)
+                {
+                    return (InputController.TouchInfo)((int)Input.GetTouch(0).phase);
+                }
             }
+            else
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    return InputController.TouchInfo.Began;
+                }
+                if (Input.GetMouseButton(0))
+                {
+                    return InputController.TouchInfo.Now;
+                }
+                if (Input.GetMouseButtonUp(0))
+                {
+                    return InputController.TouchInfo.End;
+                }
+            }
+            return InputController.TouchInfo.None;
+        }
 
-            return false;
+        /// <summary>
+        /// タッチポジションを取得(エディタと実機を考慮)
+        /// </summary>
+        /// <returns>タッチポジション。タッチされていない場合は (0, 0)</returns>
+        public Vector2 GetTouchPosition()
+        {
+            if (this.CheckTouchPlatform())
+            {
+                if (Input.touchCount > 0)
+                {
+                    Touch touch = Input.GetTouch(0);
+                    return touch.position;
+                }
+            }
+            else
+            {
+                InputController.TouchInfo touch = this.GetTouchInfo();
+                if (touch != InputController.TouchInfo.None) { return Input.mousePosition; }
+            }
+            return Vector2.zero;
         }
     }
 }

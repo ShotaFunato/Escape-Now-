@@ -31,8 +31,11 @@ public class StageScene : Work
         DataBankController dataBankController = DataBankController.Instance;
         MapController mapController = MapController.Instance;
 
+        // ステージ攻略状態を初期設定にする
+        dataBankController.Entry((int)DataEntryDef.DataBankKind.StageClear, 0);
+
         int num = 0;
-        dataBankController.GetNumber(ref num, (int)DataEntryDef.NumbersKind.SelectStageId);
+        dataBankController.GetNumber(ref num, (int)DataEntryDef.DataBankKind.SelectStageId);
         mapController.MapCreate("stage" + num);
 
         List<List<int>> mapLayerDatas = mapController.GetMapDatas();
@@ -116,11 +119,17 @@ public class StageScene : Work
     {
         base.Update();
 
-        InputController inputController = InputController.Instance;
-
-        if (inputController.GetMouseLeftClick())
+        DataBankController dataBankController = DataBankController.Instance;
+        int timeLimit = 0;
+        dataBankController.GetNumber(ref timeLimit, (int)DataEntryDef.DataBankKind.TimeLimit);
+        if (timeLimit <= 0)
         {
-            SceneController.Instance.LoadScene(SceneController.SceneId.StageScene);
+            SceneController.Instance.LoadScene(SceneController.SceneId.ResultScene);
+        }
+
+        if (Input.GetMouseButton(1))
+        {
+            SceneController.Instance.LoadScene(SceneController.SceneId.ResultScene);
         }
     }
 }

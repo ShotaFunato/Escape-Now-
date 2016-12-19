@@ -12,7 +12,7 @@ public class StageButton : CanvasButton
     /// </summary>
     public override void OnClick(int num)
     {
-        DataBankController.Instance.Entry((int)DataEntryDef.NumbersKind.SelectStageId, num + 1);
+        DataBankController.Instance.Entry((int)DataEntryDef.DataBankKind.SelectStageId, num);
         SceneController.Instance.LoadScene(SceneController.SceneId.StageScene);
     }
 }
