@@ -11,6 +11,12 @@ namespace FunatoLib
     public abstract class NumbersBase : MonoBehaviour
     {
         /// <summary>
+        /// 表示サイズ
+        /// </summary>
+        [SerializeField]
+        protected float fontSize = 0.1f;
+
+        /// <summary>
         /// テクスチャデータ化している文字列
         /// </summary>
         protected string decodeStr;
@@ -29,16 +35,6 @@ namespace FunatoLib
         /// NumSpriteのプレハブへのパス
         /// </summary>
         protected string prefabPass;
-
-        /// <summary>
-        /// 表示サイズ
-        /// </summary>
-        public float fontSize = 0.1f;
-
-        /// <summary>
-        /// 初期登録用
-        /// </summary>
-        protected int defNumValue = 0;
 
         /// <summary>
         /// 1フレ前の数値
@@ -113,14 +109,12 @@ namespace FunatoLib
         /// </summary>
         protected virtual void Start()
         {
-            // 標準値で登録
-            DataBankController.Instance.Entry(this.entrykind, this.defNumValue);
-
             // 数値スプライト設定
             this.SetNum();
 
             // 更新されたかを確認するため、値保持
-            this.prevNumValue = this.defNumValue;
+            this.prevNumValue = 0;
+            DataBankController.Instance.GetNumber(ref this.prevNumValue, this.entrykind);
         }
 
         /// <summary>

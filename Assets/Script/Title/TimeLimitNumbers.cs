@@ -25,8 +25,10 @@ public class TimeLimitNumbers : Numbers
     {
         // 基底の方で処理する前に色々とゲームに合わせて設定しておく
         this.kind = DataEntryDef.DataBankKind.TimeLimit;
-        this.defNumValue = TimeLimitNumbers.DefaultTime;
-        this.timeLimit = this.defNumValue;
+        this.timeLimit = TimeLimitNumbers.DefaultTime;
+
+        // 標準値で登録
+        DataBankController.Instance.Entry((int)this.kind, TimeLimitNumbers.DefaultTime);
 
         base.Start();
     }
@@ -37,7 +39,6 @@ public class TimeLimitNumbers : Numbers
     protected override void Update()
     {
         // 基底の方で処理する前に計算する
-
         this.timeLimit -= Time.deltaTime;
         this.timeLimit = ((this.timeLimit < 0) ? 0 : this.timeLimit);
 

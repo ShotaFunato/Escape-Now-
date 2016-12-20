@@ -26,5 +26,6 @@ namespace DataEntryDef
 
         ClearTime,
         ItemGet,
+        IsClear,
     };
 }

@@ -7,7 +7,7 @@ using UnityEngine;
 using System.Collections;
 using FunatoLib;
 
-public class Numbers : NumbersBase
+public abstract class Numbers : NumbersBase
 {
     /// <summary>
     /// 種別

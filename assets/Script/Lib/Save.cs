@@ -3,6 +3,7 @@
 * @author Shota Funato
 */
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 namespace FunatoLib
@@ -18,6 +19,11 @@ namespace FunatoLib
         public static void DataEntry<T>(string key, T data)
         {
             object obj = (object)data;
+            if (typeof(T) == typeof(bool))
+            {
+                int tmp = Convert.ToInt16(data);
+                PlayerPrefs.SetInt(key, tmp);
+            }
             if (typeof(T) == typeof(int))
             {
                 PlayerPrefs.SetInt(key, (int)obj);
@@ -43,6 +49,12 @@ namespace FunatoLib
         {
             object defObj = (object)defData;
             object obj = null;
+            if (typeof(T) == typeof(bool))
+            {
+                int tmp = Convert.ToInt16(defData);
+                obj = PlayerPrefs.GetInt(key, tmp);
+                obj = Convert.ToBoolean(obj);
+            }
             if (typeof(T) == typeof(int))
             {
                 obj = PlayerPrefs.GetInt(key, (int)defObj);

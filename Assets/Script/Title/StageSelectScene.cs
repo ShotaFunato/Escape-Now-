@@ -10,6 +10,8 @@ using FunatoLib;
 
 public class StageSelectScene : Work
 {
+    /*
+     * 並びをソース側でやる場合の処理は使わなくなったのでコメントアウト
     /// <summary>
     /// ステージ数
     /// </summary>
@@ -66,4 +68,5 @@ public class StageSelectScene : Work
             Save.GetData(key + DataEntryDef.SaveKind.ItemGet.ToString(), ItemGetNumbers.DefaultNum);
         }
     }
+    */
 }

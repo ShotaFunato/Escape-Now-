@@ -97,7 +97,7 @@ public class Player : Work
             Vector2 nowWH = mapController.CalcMapChipHW(this.transform.localPosition);
             Vector2 selectWH = new Vector2();
             MapController.CsvCode code = mapController.ChangePosToChipWH(ref selectWH, MapController.MapLayerKind.Map, inputController.GetTouchPosition());
-            if ((code != MapController.CsvCode.None) && (nowWH.x == selectWH.x) && (nowWH.y == selectWH.y))
+            if ((code != MapController.CsvCode.None) && (nowWH == selectWH))
             {
                 // 現在位置を最初の地点として登録
                 this.routeWHList.Add(nowWH);
@@ -109,51 +109,76 @@ public class Player : Work
     }
 
     /// <summary>
-    /// ルート選択
+    /// ルート選択：タッチ終了
     /// </summary>
-    private void RouteSelect()
+    private void RouteSelectTouchEnd()
+    {
+        // ルートに現在位置以外の地点が登録されていないならデータ削除して、待機状態に遷移する
+        if (this.routeWHList.Count <= 1)
+        {
+            this.routeWHList.Clear();
+            this.stateRoutine1 = StateRoutine1.StateStay;
+        }
+        // ルート登録されているなら移動状態に遷移する
+        else
+        {
+            this.stateRoutine1 = StateRoutine1.StateMove;
+        }
+    }
+
+    /// <summary>
+    /// ルート選択：タッチ移動
+    /// </summary>
+    private void RouteSelectTouchMove()
     {
         MapController mapController = MapController.Instance;
         InputController inputController = InputController.Instance;
 
-        InputController.TouchInfo info = inputController.GetTouchInfo();
+        // １つ手前のルート地点は選択しないように場所の添え字取得
+        int prevId = ((this.routeWHList.Count <= 2) ? 0 : this.routeWHList.Count - 2);
+        Vector2 prevWH = this.routeWHList[prevId];
+
+        // タッチしている地点のマップコードと場所の添え字取得
+        Vector2 selectWH = new Vector2();
+        MapController.CsvCode code = mapController.ChangePosToChipWH(ref selectWH, MapController.MapLayerKind.Map, inputController.GetTouchPosition());
+
+        // タッチしている所が、何があるところで、１つ手前の場所じゃないなら
+        if ((code != MapController.CsvCode.None) && (prevWH != selectWH))
+        {
+            // 現在位置で通過できるルートを取得
+            int nowId = ((this.routeWHList.Count <= 1) ? 0 : this.routeWHList.Count - 1);
+            Vector2 nowWH = this.routeWHList[nowId];
+            MapController.PassageRoute passageRoute = mapController.GetPassageRoute(nowWH);
+            
+            // タッチしている所が現在位置から通過できるルートのいずれかなら登録する
+            for (int i = 0; i < (int)MapController.Dir.Max; i++)
+            {
+                Vector2 moveWH = nowWH + MapController.RouteChkTbl[i];
+                if ((passageRoute.dir[i]) && (selectWH == moveWH))
+                {
+                    this.routeWHList.Add(moveWH);
+                    break;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// ルート選択
+    /// </summary>
+    private void RouteSelect()
+    {
+        InputController.TouchInfo info = InputController.Instance.GetTouchInfo();
+
         // タッチが離れた or タッチしていない
         if ((info == InputController.TouchInfo.None) || (info == InputController.TouchInfo.End))
         {
-            if (this.routeWHList.Count <= 1)
-            {
-                this.routeWHList.Clear();
-                this.stateRoutine1 = StateRoutine1.StateStay;
-            }
-            else
-            {
-                this.stateRoutine1 = StateRoutine1.StateMove;
-            }
+            this.RouteSelectTouchEnd();
         }
         // タッチしている
         else
         {
-            int prevId = ((this.routeWHList.Count <= 2) ? 0 : this.routeWHList.Count - 2);
-            Vector2 prevWH = this.routeWHList[prevId];
-            Vector2 selectWH = new Vector2();
-            MapController.CsvCode code = mapController.ChangePosToChipWH(ref selectWH, MapController.MapLayerKind.Map, inputController.GetTouchPosition());
-            if ((code != MapController.CsvCode.None) && (prevWH != selectWH))
-            {
-                // 現在位置で通過できるルートを取得
-                int nowId = ((this.routeWHList.Count <= 1) ? 0 : this.routeWHList.Count - 1);
-                Vector2 nowWH = this.routeWHList[nowId];
-                MapController.PassageRoute passageRoute = mapController.GetPassageRoute(nowWH);
-                // 通過できるルートのいずれかを選択していたら登録する
-                for (int i = 0; i < (int)MapController.Dir.Max; i++)
-                {
-                    Vector2 moveWH = nowWH + MapController.RouteChkTbl[i];
-                    if ((passageRoute.dir[i]) && (selectWH == moveWH))
-                    {
-                        this.routeWHList.Add(moveWH);
-                        break;
-                    }
-                }
-            }
+            this.RouteSelectTouchMove();
         }
     }
 

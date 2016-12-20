@@ -5,6 +5,7 @@
 
 using UnityEngine;
 using System.Collections;
+using FunatoLib;
 
 public class ItemGetNumbers : Numbers
 {
@@ -20,7 +21,9 @@ public class ItemGetNumbers : Numbers
     {
         // 基底の方で処理する前に色々とゲームに合わせて設定しておく
         this.kind = DataEntryDef.DataBankKind.ItemGet;
-        this.defNumValue = ItemGetNumbers.DefaultNum;
+
+        // 標準値で登録
+        DataBankController.Instance.Entry((int)this.kind, ItemGetNumbers.DefaultNum);
 
         base.Start();
     }
