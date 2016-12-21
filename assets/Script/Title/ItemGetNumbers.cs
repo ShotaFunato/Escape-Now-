@@ -19,12 +19,19 @@ public class ItemGetNumbers : Numbers
     /// </summary>
     protected override void Start()
     {
-        // 基底の方で処理する前に色々とゲームに合わせて設定しておく
-        this.kind = DataEntryDef.DataBankKind.ItemGet;
-
-        // 標準値で登録
-        DataBankController.Instance.Entry((int)this.kind, ItemGetNumbers.DefaultNum);
-
         base.Start();
+
+        // データ管理に標準値を登録し、それを表示する
+        this.dataBankKind = DataEntryDef.DataBankKind.ItemGet;
+        DataBankController.Instance.Entry((int)this.dataBankKind, ItemGetNumbers.DefaultNum);
+        this.SetDataBankNum();
+    }
+
+    /// <summary>
+    /// 更新
+    /// </summary>
+    void Update()
+    {
+        this.DataBankNumUpdate();
     }
 }

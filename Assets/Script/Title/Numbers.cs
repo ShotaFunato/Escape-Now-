@@ -7,23 +7,23 @@ using UnityEngine;
 using System.Collections;
 using FunatoLib;
 
-public abstract class Numbers : NumbersBase
+public class Numbers : NumbersBase
 {
     /// <summary>
-    /// 種別
+    /// DataBankControllerに登録する種別
     /// </summary>
-    protected DataEntryDef.DataBankKind kind;
+    protected DataEntryDef.DataBankKind dataBankKind;
+
+    /// <summary>
+    /// 1フレ前の数値
+    /// </summary>
+    protected int prevNumValue = 0;
 
     /// <summary>
     /// 初期化
     /// </summary>
-    protected override void Start()
+    protected virtual void Start()
     {
-        // 基底の方で処理する前に色々とゲームに合わせて設定しておく
-
-        // エディタ側で設定された登録種別を設定しておく
-        this.entrykind = (int)this.kind;
-
         // テクスチャ内に書いてある文字列設定
         this.decodeStr = "0123456789";
 
@@ -35,7 +35,37 @@ public abstract class Numbers : NumbersBase
 
         // 数字１つ１つを出すためのプレハブへのパス設定
         this.prefabPass = "Prefab/NumSprite";
+    }
 
-        base.Start();
+    /// <summary>
+    /// DataBankControllerに登録されたもので値初期化
+    /// </summary>
+    protected virtual void SetDataBankNum()
+    {
+        // 数値スプライト設定
+        int tmpInt = 0;
+        DataBankController.Instance.GetNumber(ref tmpInt, (int)this.dataBankKind);
+        this.SetNum(tmpInt);
+
+        // 更新されたかを確認するため、値保持
+        this.prevNumValue = tmpInt;
+    }
+
+    /// <summary>
+    /// DataBankControllerに登録されたもので値更新
+    /// </summary>
+    protected virtual void DataBankNumUpdate()
+    {
+        DataBankController dataBankController = DataBankController.Instance;
+        int tmpNum = this.prevNumValue;
+
+        if (dataBankController.GetNumber(ref tmpNum, (int)this.dataBankKind))
+        {
+            if (this.prevNumValue != tmpNum)
+            {
+                this.SetNum(tmpNum);
+                this.prevNumValue = tmpNum;
+            }
+        }
     }
 }

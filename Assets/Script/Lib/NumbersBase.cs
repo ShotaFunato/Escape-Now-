@@ -37,24 +37,11 @@ namespace FunatoLib
         protected string prefabPass;
 
         /// <summary>
-        /// 1フレ前の数値
+        /// 指定数値でスプライトフォントを作成する
         /// </summary>
-        protected int prevNumValue = 0;
-
-        /// <summary>
-        /// 管理に登録する際の種別
-        /// </summary>
-        protected int entrykind;
-
-        /// <summary>
-        /// 指定の文字でスプライトフォントを作成する
-        /// </summary>
-        protected void SetNum()
+        public void SetNum(int num)
         {
-            DataBankController dataBankController = DataBankController.Instance;
-            int tmpInt = 0;
-            dataBankController.GetNumber(ref tmpInt, this.entrykind);
-            string tmpStr = tmpInt.ToString();
+            string tmpStr = num.ToString();
             int i = 0;
 
             foreach (char val in tmpStr)
@@ -102,38 +89,6 @@ namespace FunatoLib
                     tmpX -= this.transform.localScale.x * this.fontSize;
                 }
             }
-        }
-
-        /// <summary>
-        /// 初期化
-        /// </summary>
-        protected virtual void Start()
-        {
-            // 数値スプライト設定
-            this.SetNum();
-
-            // 更新されたかを確認するため、値保持
-            this.prevNumValue = 0;
-            DataBankController.Instance.GetNumber(ref this.prevNumValue, this.entrykind);
-        }
-
-        /// <summary>
-        /// 更新
-        /// </summary>
-        protected virtual void Update()
-        {
-            DataBankController dataBankController = DataBankController.Instance;
-            int tmpNum = this.prevNumValue;
-
-            if (dataBankController.GetNumber(ref tmpNum, this.entrykind))
-            {
-                if (this.prevNumValue != tmpNum)
-                {
-                    dataBankController.Entry(this.entrykind, tmpNum);
-                    this.SetNum();
-                }
-            }
-            this.prevNumValue = tmpNum;
         }
     }
 }

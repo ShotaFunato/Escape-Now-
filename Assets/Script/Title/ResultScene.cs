@@ -5,7 +5,6 @@
 
 using UnityEngine;
 using System.Collections;
-
 using FunatoLib;
 
 public class ResultScene : Work
@@ -17,27 +16,27 @@ public class ResultScene : Work
     {
         base.Start();
 
-        // リザルトに遷移した時に、セーブデータとして保存する
-        /*
-        // ゴールまで到達してクリアしたなら
-        if ()
-        {
-            PlayerPrefsでセーブデータに今回のスコア、ステージクリア済みを保存する
-        }        
-        */
         DataBankController dataBankController = DataBankController.Instance;
-        int stageId = 0;
-        int stageClear = 0;
-        int timeLimit = 0;
-        int itemGetNum = 0;
-        
-        dataBankController.GetNumber(ref stageId, (int)DataEntryDef.DataBankKind.SelectStageId);
-        dataBankController.GetNumber(ref stageClear, (int)DataEntryDef.DataBankKind.StageClear);
-        dataBankController.GetNumber(ref timeLimit, (int)DataEntryDef.DataBankKind.TimeLimit);
-        dataBankController.GetNumber(ref itemGetNum, (int)DataEntryDef.DataBankKind.ItemGet);
+        GameObject uiClear = this.transform.FindChild("StageClear").gameObject;
+        GameObject uiMiss = this.transform.FindChild("StageMiss").gameObject;
 
+        // リザルト遷移時にゲームクリア状態をチェック
+        int stageClear = 0;
+        dataBankController.GetNumber(ref stageClear, (int)DataEntryDef.DataBankKind.StageClear);
+        
+        // クリアしていたらセーブデータとして保存する
         if (stageClear != 0)
         {
+            // 失敗表示削除
+            Destroy(uiMiss);
+
+            int stageId = 0;
+            int timeLimit = 0;
+            int itemGetNum = 0;
+            dataBankController.GetNumber(ref stageId, (int)DataEntryDef.DataBankKind.SelectStageId);
+            dataBankController.GetNumber(ref timeLimit, (int)DataEntryDef.DataBankKind.TimeLimit);
+            dataBankController.GetNumber(ref itemGetNum, (int)DataEntryDef.DataBankKind.ItemGet);
+
             string key = DataEntryDef.SaveKind.Stage.ToString() + stageId;
             Save.DataEntry(key + DataEntryDef.SaveKind.IsClear.ToString(), true);
 
@@ -56,6 +55,11 @@ public class ResultScene : Work
 
             // 登録したデータをセーブする
             Save.DataSave();
+        }
+        else
+        {
+            // クリア表示削除
+            Destroy(uiClear);
         }
     }
 }
